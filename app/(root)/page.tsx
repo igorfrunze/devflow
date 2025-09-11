@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
@@ -7,52 +8,31 @@ import ROUTES from "@/constants/routes";
 const questions = [
   {
     _id: "1",
-    title: "How to learn React",
-    description: "React is a JavaScript library for building user interfaces.",
+    title: "How to learn React?",
+    description: "I want to learn React, can anyone help me?",
     tags: [
-      {
-        _id: "1",
-        name: "react",
-      },
-      {
-        _id: "2",
-        name: "javascript",
-      },
+      { _id: "1", name: "React" },
+      { _id: "2", name: "JavaScript" },
     ],
-    author: {
-      _id: "1",
-      name: "John Doe",
-      image: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-      upvotes: 10,
-      answers: 2,
-      views: 100,
-      createdAt: new Date(),
-    },
+    author: { _id: "1", name: "John Doe" },
+    upvotes: 10,
+    answers: 5,
+    views: 100,
+    createdAt: new Date(),
   },
   {
     _id: "2",
-    title: "How to learn JavaScript",
-    description:
-      "JavaScript is a programming language used to build interactive web pages and web applications.",
+    title: "How to learn JavaScript?",
+    description: "I want to learn JavaScript, can anyone help me?",
     tags: [
-      {
-        _id: "1",
-        name: "react",
-      },
-      {
-        _id: "2",
-        name: "javascript",
-      },
+      { _id: "1", name: "JavaScript" },
+      { _id: "2", name: "JavaScript" },
     ],
-    author: {
-      _id: "1",
-      name: "Jhoanna Doe",
-      image: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-      upvotes: 10,
-      answers: 2,
-      views: 100,
-      createdAt: new Date(),
-    },
+    author: { _id: "1", name: "John Doe" },
+    upvotes: 10,
+    answers: 5,
+    views: 100,
+    createdAt: new Date(),
   },
 ];
 
@@ -61,11 +41,17 @@ interface SearchParams {
 }
 
 const Home = async ({ searchParams }: SearchParams) => {
-  const { query = "" } = searchParams;
+  const { query = "", filter = "" } = await searchParams;
 
-  const filteredQuestions = questions.filter((question) =>
-    question.title.toLowerCase().includes(query?.toLowerCase() || "")
-  );
+  const filteredQuestions = questions.filter((question) => {
+    const matchesQuery = question.title
+      .toLowerCase()
+      .includes(query.toLowerCase());
+    const matchesFilter = filter
+      ? question.tags[0].name.toLowerCase() === filter.toLowerCase()
+      : true;
+    return matchesQuery && matchesFilter;
+  });
 
   return (
     <>
@@ -87,7 +73,7 @@ const Home = async ({ searchParams }: SearchParams) => {
           otherClasses="flex-1"
         />
       </section>
-      HomeFilter
+      <HomeFilter />
       <div className="mt-10 flex w-full flex-col gap-6">
         {filteredQuestions.map((question) => (
           <h1 key={question._id}>{question.title}</h1>
